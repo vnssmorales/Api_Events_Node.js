@@ -1,6 +1,17 @@
 const mongoose = require('mongoose');
 const Event = require('../models/eventModel');
 
+//Middleware para analizar el cuerpo de las solicitudes de creación de un evento
+const validateCreateEvent = (req, res, next) => {
+    const {name, category, date} = req.body;
+    //verifica que los campos obligatorios no estén vacíos
+    if(!name || !category || !date){
+        return res.status(400).json({error: 'Debe completar los campos obligatorios. Nombre, categoría y fecha del evento.'});
+    }
+    //si todos los campos requeridos están completos, pasa al siguiente middleware o función de manejo de rutas
+    next();
+};
+
 //función para crear un evento
 const createEvent = async (req, res) => {
     const event = new Event({
@@ -26,6 +37,7 @@ const createEvent = async (req, res) => {
     }
 };
 
+//función para obtener un evento por su id
 const getEventById = async (req, res) => {
     const eventId = req.params.id; //obtiene el id del evento de la url (params)
     try{
@@ -41,6 +53,7 @@ const getEventById = async (req, res) => {
     }
 };
 
+//función para obtener todos los eventos
 const getAllEvents = async (req, res) => {
     try{
         const events = await Event.find();
@@ -55,6 +68,7 @@ const getAllEvents = async (req, res) => {
     }
 };
 
+//función para actualizar un evento por su id
 const updateEventById = async (req, res) => {
     const eventId = req.params.id;
     try{//findByIdAndUpdate: Busca un documento por su id y lo actualiza y {new: true} devuelve el documento actualizado
@@ -69,6 +83,7 @@ const updateEventById = async (req, res) => {
     }
 };
 
+//función para eliminar un evento por su id
 const deleteEventById = async (req, res) => {
     const eventId = req.params.id;
     try{ //findByIdAndDelete: Busca un documento por su id y lo elimina
@@ -83,12 +98,11 @@ const deleteEventById = async (req, res) => {
     }
 };
 
-
-
 module.exports = {
     createEvent,
     getEventById,
     getAllEvents,
     updateEventById,
     deleteEventById,
+    validateCreateEvent,
 };
