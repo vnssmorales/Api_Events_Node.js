@@ -1,5 +1,16 @@
 const eventServices = require('../services/eventServices');
 
+//función para crear un evento
+const createEvent = async (req, res) => {
+    try{
+        const eventSaved = await eventServices.createEvent(req, res);
+        console.log('Evento creado correctamente', eventSaved);
+        res.status(201).json(eventSaved);
+    }catch(err){
+        console.error('Error al crear el evento:', err);
+        throw new Error('Error al crear el evento en la base de datos');
+    }
+};
 //funcion para obtener todos los eventos
 const getAllEvents = async (req, res) => {
     try{
@@ -11,18 +22,6 @@ const getAllEvents = async (req, res) => {
     }catch(err){
         console.error('Error al obtener los eventos:', err);
         res.status(400).json({error: 'Error al obtener los eventos de la base de datos'});
-    }
-};
-
-//función para crear un evento
-const createEvent = async (req, res) => {
-    try{
-        const eventSaved = await eventServices.createEvent(req, res);
-        console.log('Evento creado correctamente', eventSaved);
-        res.status(201).json(eventSaved);
-    }catch(err){
-        console.error('Error al crear el evento:', err);
-        throw new Error('Error al crear el evento en la base de datos');
     }
 };
 
@@ -56,6 +55,21 @@ const updateEventById = async (req, res) => {
     }
 };
 
+//funcion para actualizar parcialmente un evento por su id
+const updatePartialEventById = async (req, res) => {
+    const eventId = req.params.id;
+    try{
+        const updateEvent = await eventServices.updatePartialEventById(eventId, req.body);
+        if(!updateEvent){
+            return res.status(404).json({error: 'Evento no encontrado'});
+        }
+        res.status(200).json(updateEvent);
+    }catch(err){
+        console.error('Error al actualizar el evento:', err);
+        res.status(400).json({error: 'Error al actualizar el evento en la base de datos'});
+    }
+};
+
 //función para eliminar un evento por su id
 const deleteEventById = async (req, res) => {
     const eventId = req.params.id;
@@ -73,9 +87,10 @@ const deleteEventById = async (req, res) => {
 
 
 module.exports = {
-    getAllEvents,
     createEvent,
+    getAllEvents,
     getEventById,
     updateEventById,
+    updatePartialEventById,
     deleteEventById,
 };

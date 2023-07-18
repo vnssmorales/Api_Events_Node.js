@@ -9,6 +9,7 @@ router.post('/create', eventServices.validateCreateEvent, eventController.create
 router.get('/:id', eventController.getEventById);
 router.get('/', eventController.getAllEvents);
 router.put('/:id', eventController.updateEventById);
+router.patch('/:id', eventController.updatePartialEventById);
 router.delete('/:id', eventController.deleteEventById);
 
 module.exports = router;

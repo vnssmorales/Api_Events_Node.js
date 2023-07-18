@@ -18,20 +18,6 @@ const logRequest = (req, res, next) => {
     next();
 };
 
-//función para obtener todos los eventos
-const getAllEvents = async (req, res) => {
-    try{
-        const events = await Event.find();
-        //si no encuentra eventos, devuelve un mensaje de error
-        if(events.length === 0){
-            return null;
-        }
-        return events // si encuentra eventos, los devuelve como respuesta en formato json
-    }catch(err){
-        console.error('Error al obtener los eventos:', err);
-       throw new Error ('Error al obtener los eventos de la base de datos');
-    }
-};
 
 //función para crear un evento
 const createEvent = async (req, res) => {
@@ -55,6 +41,21 @@ const createEvent = async (req, res) => {
     }catch(err){
         console.error('Error al guardar el evento:', err);
         throw new Error('Error al guardar el evento en la base de datos');
+    }
+};
+
+//función para obtener todos los eventos
+const getAllEvents = async (req, res) => {
+    try{
+        const events = await Event.find();
+        //si no encuentra eventos, devuelve un mensaje de error
+        if(events.length === 0){
+            return null;
+        }
+        return events // si encuentra eventos, los devuelve como respuesta en formato json
+    }catch(err){
+        console.error('Error al obtener los eventos:', err);
+       throw new Error ('Error al obtener los eventos de la base de datos');
     }
 };
 
@@ -88,6 +89,21 @@ const updateEventById = async (eventId, eventData) => {
     }
 };
 
+//funcion para actualizar parcialmente un evento por su id
+const updatePartialEventById = async (eventId, eventData) => {
+    try{
+        const updateEvent = await Event.findByIdAndUpdate(eventId, eventData, {new: true});
+        if(!updateEvent){
+            return null;
+        }
+        console.log('Evento actualizado:', updateEvent);
+        return updateEvent;
+    }catch(err){
+        console.error('Error al actualizar el evento:', err);
+        throw new Error('Error al actualizar el evento en la base de datos');
+    }
+};
+
 //función para eliminar un evento por su id
 const deleteEventById = async (eventId) => { //recibe el id del evento
     try{ //findByIdAndDelete: Busca un documento por su id y lo elimina
@@ -104,10 +120,11 @@ const deleteEventById = async (eventId) => { //recibe el id del evento
 };
 
 module.exports = {
-    getAllEvents,
     createEvent,
+    getAllEvents,
     getEventById,
     updateEventById,
+    updatePartialEventById,
     deleteEventById,
     validateCreateEvent,
     logRequest,
