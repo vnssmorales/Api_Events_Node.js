@@ -28,7 +28,7 @@ const createEvent = async (req, res) => {
 
 //función para obtener un evento por su id
 const getEventById = async (req, res) => {
-    const eventId = req.params.id;
+    const eventId = req.params.id; //obtiene el id del evento de la url (params)
     try{
         const event = await eventServices.getEventById(eventId);
         if(!event){
@@ -44,9 +44,8 @@ const getEventById = async (req, res) => {
 //función para actualizar un evento por su id
 const updateEventById = async (req, res) => {
     const eventId = req.params.id;
-    const eventData = req.body;
     try{
-        const updateEvent = await eventServices.updateEventById(eventId, eventData);
+        const updateEvent = await eventServices.updateEventById(eventId, req.body);//req.body: contiene los datos del evento a actualizar
         if(!updateEvent){
             return res.status(404).json({error: 'Evento no encontrado'});
         }

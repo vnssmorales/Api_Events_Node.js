@@ -54,53 +54,52 @@ const createEvent = async (req, res) => {
         return eventSaved; //retorna el evento guardado(para que no aparezca undefined en la consola en createEvent de controllers/eventController.js)
     }catch(err){
         console.error('Error al guardar el evento:', err);
-        res.status(400).json({error: 'Error al guardar el evento en la base de datos'});
+        throw new Error('Error al guardar el evento en la base de datos');
     }
 };
 
 //función para obtener un evento por su id
-const getEventById = async (req, res) => {
-    const eventId = req.params.id; //obtiene el id del evento de la url (params)
+const getEventById = async (eventId) => {
     try{
         const event = await Event.findById(eventId);
         if(!event){
-            return res.status(404).json({error: 'Evento no encontrado'});
+            return null; //si no encuentra el evento, devuelve null
         };
         console.log('Evento encontrado:', event);
-        res.status(200).json(event);
+        return event; //si encuentra el evento, lo devuelve
     }catch(err){
         console.error('Error al obtener el evento:', err);
-        res.status(400).json({error: 'Error al obtener el evento de la base de datos'});
+        throw new Error('Error al obtener el evento de la base de datos');
     }
 };
 
 //función para actualizar un evento por su id
-const updateEventById = async (req, res) => {
-    const eventId = req.params.id;
+const updateEventById = async (eventId, eventData) => {
     try{//findByIdAndUpdate: Busca un documento por su id y lo actualiza y {new: true} devuelve el documento actualizado
-        const updateEvent = await Event.findByIdAndUpdate(eventId, req.body, {new: true});
+        const updateEvent = await Event.findByIdAndUpdate(eventId, eventData, {new: true});
         if(!updateEvent){
-            return res.status(404).json({error: 'Evento no encontrado'});
+            return null; //si no encuentra el evento, devuelve null
         }
-        res.status(200).json(updateEvent);
+        console.log('Evento actualizado:', updateEvent);
+       return updateEvent; //devuelve el evento actualizado si lo encuentra
     }catch(err){
         console.error('Error al actualizar el evento:', err);
-        res.status(400).json({error: 'Error al actualizar el evento en la base de datos'});
+        throw new Error('Error al actualizar el evento en la base de datos');
     }
 };
 
 //función para eliminar un evento por su id
-const deleteEventById = async (req, res) => {
-    const eventId = req.params.id;
+const deleteEventById = async (eventId) => { //recibe el id del evento
     try{ //findByIdAndDelete: Busca un documento por su id y lo elimina
         const eventDeleted = await Event.findByIdAndDelete(eventId);
         if(!eventDeleted){
-            return res.status(404).json({error: 'Evento no encontrado'});
+            return null; //si no encuentra el evento, devuelve null
         }
-        res.status(200).json({message: 'Evento eliminado correctamente'});
+       console.log('Evento eliminado:', eventDeleted);
+         return eventDeleted; //devuelve el mensaje de evento eliminado si lo encuentra y lo elimina
     }catch(err){
         console.error('Error al eliminar el evento:', err);
-        res.status(400).json({error: 'Error al eliminar el evento de la base de datos'});
+        throw new Error('Error al eliminar el evento en la base de datos');
     }
 };
 
