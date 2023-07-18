@@ -3,7 +3,6 @@ const connectDB = require('./db');
 const eventRouter = require('./router/eventRouter');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
-const path = require('path');
 
 const app = express();
 
@@ -16,12 +15,10 @@ app.use(express.json());
 app.use('/Events', eventRouter);
 
 //ruta para la documentación de la API
-const swaggerPath = path.join(__dirname, 'swagger.json');
-//console.log('Ruta absoluta de swagger.json:',absolutePath);
+//middleware para servir archivos estáticos
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-//middleware para servir archivos estáticos
-app.use('/api-docs',express.static(swaggerPath));//utilizo  swaggerPath para servir el archivo swagger.json
+
 
 //middleware para manejar errores
 app.listen(3000, () => console.log('Server is running on port 3000'));
