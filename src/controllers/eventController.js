@@ -1,65 +1,11 @@
-const mongoose = require('mongoose');
-const Event = require('../models/eventModel');
+const eventServices = require('../services/eventServices');
 
-//Middleware para analizar el cuerpo de las solicitudes de creación de un evento
-const validateCreateEvent = (req, res, next) => {
-    const {name, category, date} = req.body;
-    //verifica que los campos obligatorios no estén vacíos
-    if(!name || !category || !date){
-        return res.status(400).json({error: 'Debe completar los campos obligatorios. Nombre, categoría y fecha del evento.'});
-    }
-    //si todos los campos requeridos están completos, pasa al siguiente middleware o función de manejo de rutas
-    next();
-};
-
-//función para crear un evento
-const createEvent = async (req, res) => {
-    const event = new Event({
-        _id: new mongoose.Types.ObjectId(), 
-        name: req.body.name,
-        category: req.body.category,
-        date: req.body.date,
-        description: req.body.description,
-        image: req.body.image,
-        place: req.body.place,
-        price: req.body.price,
-        capacity: req.body.capacity,
-        assistance: req.body.assistance,
-        estimate: req.body.estimate,
-    });
-    try {
-        const eventSaved = await event.save();
-        console.log('Evento guardado en la base de datos:', eventSaved);
-        res.status(201).json(eventSaved);
-    }catch(err){
-        console.error('Error al guardar el evento:', err);
-        res.status(400).json({error: 'Error al guardar el evento en la base de datos'});
-    }
-};
-
-//función para obtener un evento por su id
-const getEventById = async (req, res) => {
-    const eventId = req.params.id; //obtiene el id del evento de la url (params)
-    try{
-        const event = await Event.findById(eventId);
-        if(!event){
-            return res.status(404).json({error: 'Evento no encontrado'});
-        };
-        console.log('Evento encontrado:', event);
-        res.status(200).json(event);
-    }catch(err){
-        console.error('Error al obtener el evento:', err);
-        res.status(400).json({error: 'Error al obtener el evento de la base de datos'});
-    }
-};
-
-//función para obtener todos los eventos
+//funcion para obtener todos los eventos
 const getAllEvents = async (req, res) => {
     try{
-        const events = await Event.find();
-        //si no encuentra eventos, devuelve un mensaje de error
+        const events = await eventServices.getAllEvents();
         if(events.length === 0){
-            return res.status(404).json({error: 'No se hay eventos en la base de datos'});
+            return res.status(404).json({error: 'No se encontraron eventos en la base de datos'});
         }
         res.status(200).json(events); // si encuentra eventos, los devuelve como respuesta en formato json
     }catch(err){
@@ -68,11 +14,39 @@ const getAllEvents = async (req, res) => {
     }
 };
 
+//función para crear un evento
+const createEvent = async (req, res) => {
+    try{
+        const eventSaved = await eventServices.createEvent(req, res);
+        console.log('Evento creado correctamente', eventSaved);
+        res.status(201).json(eventSaved);
+    }catch(err){
+        console.error('Error al crear el evento:', err);
+        throw new Error('Error al crear el evento en la base de datos');
+    }
+};
+
+//función para obtener un evento por su id
+const getEventById = async (req, res) => {
+    const eventId = req.params.id;
+    try{
+        const event = await eventServices.getEventById(eventId);
+        if(!event){
+            return res.status(404).json({error: 'Evento no encontrado'});
+        }
+        res.status(200).json(event);
+    }catch(err){
+        console.error('Error al obtener el evento:', err);
+        res.status(400).json({error: 'Error al obtener el evento de la base de datos'});
+    }
+};
+
 //función para actualizar un evento por su id
 const updateEventById = async (req, res) => {
     const eventId = req.params.id;
-    try{//findByIdAndUpdate: Busca un documento por su id y lo actualiza y {new: true} devuelve el documento actualizado
-        const updateEvent = await Event.findByIdAndUpdate(eventId, req.body, {new: true});
+    const eventData = req.body;
+    try{
+        const updateEvent = await eventServices.updateEventById(eventId, eventData);
         if(!updateEvent){
             return res.status(404).json({error: 'Evento no encontrado'});
         }
@@ -86,9 +60,9 @@ const updateEventById = async (req, res) => {
 //función para eliminar un evento por su id
 const deleteEventById = async (req, res) => {
     const eventId = req.params.id;
-    try{ //findByIdAndDelete: Busca un documento por su id y lo elimina
-        const eventDeleted = await Event.findByIdAndDelete(eventId);
-        if(!eventDeleted){
+    try{
+        const deleteEvent = await eventServices.deleteEventById(eventId);
+        if(!deleteEvent){
             return res.status(404).json({error: 'Evento no encontrado'});
         }
         res.status(200).json({message: 'Evento eliminado correctamente'});
@@ -98,11 +72,11 @@ const deleteEventById = async (req, res) => {
     }
 };
 
+
 module.exports = {
+    getAllEvents,
     createEvent,
     getEventById,
-    getAllEvents,
     updateEventById,
     deleteEventById,
-    validateCreateEvent,
 };
