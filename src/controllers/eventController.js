@@ -8,9 +8,10 @@ const createEvent = async (req, res) => {
         res.status(201).json(eventSaved);
     }catch(err){
         console.error('Error al crear el evento:', err);
-        throw new Error('Error al crear el evento en la base de datos');
+        res.status(400).json({error: 'Error al crear el evento en la base de datos'});
     }
 };
+
 //funcion para obtener todos los eventos
 const getAllEvents = async (req, res) => {
     try{

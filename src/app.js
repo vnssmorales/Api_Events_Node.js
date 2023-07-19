@@ -18,7 +18,5 @@ app.use('/Events', eventRouter);
 //middleware para servir archivos estáticos
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-
-
 //middleware para manejar errores
 app.listen(3000, () => console.log('Server is running on port 3000'));

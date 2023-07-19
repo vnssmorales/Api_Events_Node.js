@@ -18,7 +18,6 @@ const logRequest = (req, res, next) => {
     next();
 };
 
-
 //función para crear un evento
 const createEvent = async (req, res) => {
     const event = new Event({
@@ -40,7 +39,7 @@ const createEvent = async (req, res) => {
         return eventSaved; //retorna el evento guardado(para que no aparezca undefined en la consola en createEvent de controllers/eventController.js)
     }catch(err){
         console.error('Error al guardar el evento:', err);
-        throw new Error('Error al guardar el evento en la base de datos');
+        throw new Error('Error al guardar el evento en la base de datos');//throw new Error: crea un error para que el error se muestre en la consola
     }
 };
 
@@ -60,7 +59,7 @@ const getAllEvents = async (req, res) => {
 };
 
 //función para obtener un evento por su id
-const getEventById = async (eventId) => {
+const getEventById = async (eventId) => { //recibe el id del evento de eventController.js
     try{
         const event = await Event.findById(eventId);
         if(!event){
@@ -112,7 +111,7 @@ const deleteEventById = async (eventId) => { //recibe el id del evento
             return null; //si no encuentra el evento, devuelve null
         }
        console.log('Evento eliminado:', eventDeleted);
-         return eventDeleted; //devuelve el mensaje de evento eliminado si lo encuentra y lo elimina
+         return eventDeleted; //devuelve el mensaje de evento eliminado si encuentra el evento y lo elimina
     }catch(err){
         console.error('Error al eliminar el evento:', err);
         throw new Error('Error al eliminar el evento en la base de datos');
