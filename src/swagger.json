@@ -248,7 +248,7 @@
                         }
                     },
                 "404": {
-                    "description": "No se encontraron eventos",
+                    "description": "No se encontraron eventos en la base de datos",
                     "content": {
                         "application/json": {
                             "schema": {
