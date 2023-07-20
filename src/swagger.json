@@ -286,13 +286,13 @@
                         "type": "number"
                     },
                     "price": {
-                        "type": "string"
+                        "type": "number"
                     },
                     "capacity": {
-                        "type": "string"
+                        "type": "number"
                     },
                     "assistance": {
-                        "type": "string"
+                        "type": "number"
                     },
                     "estimate": {
                         "type": "number"
