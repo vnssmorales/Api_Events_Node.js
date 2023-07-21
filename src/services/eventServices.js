@@ -12,12 +12,6 @@ const validateCreateEvent = (req, res, next) => {
     next();
 };
 
-//middleware para registrar las solicitudes
-const logRequest = (req, res, next) => {
-    console.log('Se ha recibido una petición:', req.method, req.url);
-    next();
-};
-
 //función para crear un evento
 const createEvent = async (req, res) => {
     const event = new Event({
@@ -126,5 +120,4 @@ module.exports = {
     updatePartialEventById,
     deleteEventById,
     validateCreateEvent,
-    logRequest,
 };

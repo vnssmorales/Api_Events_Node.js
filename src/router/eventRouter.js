@@ -3,7 +3,7 @@ const router = express.Router();
 const eventController = require('../controllers/eventController');
 const eventServices = require('../services/eventServices');
 
-router.use(eventServices.logRequest); //middleware logRequest (se ejecuta para todas las rutas
+router.use(eventController.logRequest); //middleware logRequest (se ejecuta para todas las rutas
 
 router.post('/create', eventServices.validateCreateEvent, eventController.createEvent); //middleware validateCreateEvent
 router.get('/:id', eventController.getEventById);
