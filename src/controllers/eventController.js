@@ -1,16 +1,11 @@
 const eventServices = require('../services/eventServices');
-
-//middleware para registrar y seguimiento de las solicitudes
-const logRequest = (req, res, next) => {
-    console.log('Se ha recibido una petición:', req.method, req.url);
-    next();
-};
+const validations = require('../middlewares/validations');
 
 //función para crear un evento
 const createEvent = async (req, res) => {
     try{
         //llamada al middleware de validacion en el eventServices
-        eventServices.validateCreateEvent(req, res, async () => {
+        validations.validateCreateEvent(req, res, async () => {
         const eventSaved = await eventServices.createEvent(req, res);
         console.log('Evento creado correctamente', eventSaved);
         res.status(201).json(eventSaved);
@@ -29,7 +24,7 @@ const getAllEvents = async (req, res) => {
             return res.status(404).json({error: 'No se encontraron eventos en la base de datos'});
         }
         console.log('Eventos encontrados:', events);
-        res.status(200).json(events); // si encuentra eventos, los devuelve como respuesta en formato json
+        res.status(200).json({events: events}); // si encuentra eventos, los devuelve como respuesta en formato json
     }catch(err){
         console.error('Error al obtener los eventos:', err);
         res.status(400).json({error: 'Error al obtener los eventos de la base de datos'});
@@ -98,7 +93,6 @@ const deleteEventById = async (req, res) => {
 
 
 module.exports = {
-    logRequest,
     createEvent,
     getAllEvents,
     getEventById,

@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const eventController = require('../controllers/eventController');
-const eventServices = require('../services/eventServices');
+const validations = require('../middlewares/validations');
 
-router.use(eventController.logRequest); //middleware logRequest (se ejecuta para todas las rutas
+router.use(validations.logRequest); //middleware logRequest (se ejecuta para todas las rutas
 
-router.post('/create', eventServices.validateCreateEvent, eventController.createEvent); //middleware validateCreateEvent
-router.get('/:id', eventController.getEventById);
-router.get('/', eventController.getAllEvents);
-router.put('/:id', eventController.updateEventById);
+router.post('/create', validations.validateCreateEvent , eventController.createEvent); //middleware validateCreateEvent
+router.get('/:id', validations.validateGetById ,eventController.getEventById);
+router.get('/',eventController.getAllEvents);
+router.put('/:id', validations.validateUpdateEvent ,eventController.updateEventById);
 router.patch('/:id', eventController.updatePartialEventById);
-router.delete('/:id', eventController.deleteEventById);
+router.delete('/:id', validations.validateDeleteEvent ,eventController.deleteEventById);
 
 module.exports = router;

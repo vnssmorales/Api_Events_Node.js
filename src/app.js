@@ -3,8 +3,12 @@ const connectDB = require('./db');
 const eventRouter = require('./router/eventRouter');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+const cors = require('cors'); //middleware para habilitar CORS
 
 const app = express();
+
+//habilita CORS para todas las rutas
+app.use(cors());
 
 connectDB()
 
@@ -20,3 +24,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //middleware para manejar errores
 app.listen(3000, () => console.log('Server is running on port 3000'));
+
+//CORS es una medida de seguridad que evita que un dominio (origen) haga peticiones HTTP a otro dominio diferente,
+// a menos que se configure explícitamente el acceso.

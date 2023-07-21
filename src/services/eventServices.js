@@ -1,17 +1,6 @@
 const mongoose = require('mongoose');
 const Event = require('../models/eventModel');
 
-//Middleware para analizar el cuerpo de las solicitudes de creación de un evento
-const validateCreateEvent = (req, res, next) => {
-    const {name, category, date} = req.body;
-    //verifica que los campos obligatorios no estén vacíos
-    if(!name || !category || !date){
-        return res.status(400).json({error: 'Debe completar los campos obligatorios. Nombre, categoría y fecha del evento.'});
-    }
-    //si todos los campos requeridos están completos, pasa al siguiente middleware o función de manejo de rutas
-    next();
-};
-
 //función para crear un evento
 const createEvent = async (req, res) => {
     const event = new Event({
@@ -119,5 +108,4 @@ module.exports = {
     updateEventById,
     updatePartialEventById,
     deleteEventById,
-    validateCreateEvent,
 };
