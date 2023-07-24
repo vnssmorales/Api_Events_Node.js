@@ -1,4 +1,15 @@
 const customerServices = require('../services/customerServices');
+const auth = require('../middlewares/auth');
+
+//controlador para iniciar sesión
+const loginUser = async (req, res) => {
+    try{
+        await auth.login(req, res);
+    }catch(err){
+        console.error('Error al iniciar sesión:', err);
+        res.status(500).json({error: 'Error al iniciar sesión'});
+    }
+}
 
 //función para crear un usuario
 const createCustomer = async (req, res) => {
@@ -94,4 +105,5 @@ module.exports = {
     updateCustomerById,
     updatePartialCustomerById,
     deleteCustomerById,
+    loginUser,
 };

@@ -1,12 +1,24 @@
 const mongoose = require("mongoose");
 const Customer = require("../models/customerModel");
 
+// Expresión regular para validar el formato de correo electrónico y la contraseña
+const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+
 //middleware para analizar la creación de un usuario (post)
 const validateCreateCustomer = (req, res, next) => {
     const {usuario, contraseña, email} = req.body;
     //verifico que los campos obligatorios no estén vacíos
     if(!usuario || !contraseña || !email){
         return res.status(400).json({error: 'Debe completar los campos obligatorios. Usuario, contraseña y email.'});
+    }
+    //verifico que el formato del email sea válido
+    if(!emailRegex.test(email)){ //utilizo el método test de las expresiones regulares
+        return res.status(400).json({error: 'El formato del email es inválido'});
+    }
+    //verifico que la contraseña cumpla con los requisitos: al menos 1 mayúscula, 1 caracter especial, 1 número y long minima 8 caracteres
+    if(!passwordRegex.test(contraseña)){
+        return res.status(400).json({error: 'La contraseña debe tener al menos 1 mayúscula, 1 caracter especial, 1 número y long minima 8 caracteres'});
     }
     //si todos los campos requeridos están completos, pasa al siguiente middleware o función de manejo de rutas
     next();
@@ -33,6 +45,14 @@ const validateUpdateCustomer = (req, res, next) => {
     //verifico que los campos obligatorios no estén vacíos
     if(!usuario || !contraseña || !email){
         return res.status(400).json({error: 'Debe completar los campos obligatorios. Usuario, contraseña y email.'});
+    }
+    //verifico que el formato del email sea válido
+    if(!emailRegex.test(email)){
+        return res.status(400).json({error: 'El formato del email es inválido'});
+    }
+    //verifico que la contraseña cumpla con los requisitos
+    if(!passwordRegex.test(contraseña)){
+        return res.status(400).json({error: 'La contraseña debe tener al menos 1 mayúscula, 1 caracter especial, 1 número y long minima 8 caracteres'});
     }
     next();
 };

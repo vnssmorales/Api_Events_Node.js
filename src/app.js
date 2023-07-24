@@ -5,6 +5,7 @@ const customerRouter = require('./router/customerRouter');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const cors = require('cors'); //middleware para habilitar CORS
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -12,6 +13,8 @@ const app = express();
 app.use(cors());
 
 connectDB()
+
+app.use(cookieParser());//middleware para analizar las cookies de las solicitudes entrantes
 
  //middleware para analizar el cuerpo de las solicitudes entrantes con formato JSON y la convierte en un objeto JavaScript
 app.use(express.json());
