@@ -11,9 +11,28 @@ const loginUser = async (req, res) => {
     }
 }
 
+//controlador para desloguear un usuario
+const logoutUser = async (req, res) => {
+    try{
+        //obtener el token de las cookies de la solicitud
+        const token = req.cookies.token;
+        //invalidar el token agregándolo a la lista negra
+        auth.logout(token);
+        //limpiar la cookie del token
+        res.clearCookie('token', {httpOnly: true, secure: true});
+        //devolver una respuesta exitosa
+        res.status(200).json({message: 'Usuario deslogueado correctamente'});
+    }catch(err){
+        console.error('Error al desloguear el usuario:', err);
+        res.status(500).json({error: 'Error al desloguear el usuario'});
+    }
+};
+
+
 //función para crear un usuario
 const createCustomer = async (req, res) => {
     try{
+        console.log('Datos recibidos en el controlador:', req.body);
         const userSaved = await customerServices.createCustomer(req, res);
         console.log('Usuario creado correctamente', userSaved);
         res.status(201).json(userSaved);
@@ -106,4 +125,5 @@ module.exports = {
     updatePartialCustomerById,
     deleteCustomerById,
     loginUser,
+    logoutUser
 };

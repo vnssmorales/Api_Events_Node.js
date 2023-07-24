@@ -2,6 +2,7 @@ const express = require('express');
 const connectDB = require('./db');
 const eventRouter = require('./router/eventRouter');
 const customerRouter = require('./router/customerRouter');
+const authRouter = require('./router/authRouter');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const cors = require('cors'); //middleware para habilitar CORS
@@ -22,6 +23,7 @@ app.use(express.json());
 //rutas de la API
 app.use('/Events', eventRouter);
 app.use('/customer', customerRouter);
+app.use('/auth', authRouter);
 
 //ruta para la documentación de la API
 //middleware para servir archivos estáticos

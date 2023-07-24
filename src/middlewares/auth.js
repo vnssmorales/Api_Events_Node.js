@@ -10,7 +10,6 @@ const createToken = (user) => { //recibe el usuario que se loguea
     const payload = { //payload: datos que se van a guardar en el token
         id: user._id,
         email: user.email,
-        role: user.rol,
     };
     const token = jwt.sign(payload, secretKey, {expiresIn: '1h'}); //sign: firma el token con la clave secreta y le agrega una expiración de 1 hora
     return token;
@@ -18,10 +17,10 @@ const createToken = (user) => { //recibe el usuario que se loguea
 
 //metodo para verificar las credenciales al iniciar sesión
 const login = async (req, res) => {//recibe el email y la contraseña que se ingresan al iniciar sesión
-    const {usuario, contraseña} = req.body;
+    const {email, contraseña} = req.body;
     try{
         //busca el usuario por su email en la base de datos
-        const user = await Customer.findOne({ usuario });
+        const user = await Customer.findOne({ email: email });
         //si no encuentra el usuario, devuelve un mensaje de error
         if(!user){
             return res.status(401).json({error: 'credenciales incorrectas'});
@@ -44,8 +43,32 @@ const login = async (req, res) => {//recibe el email y la contraseña que se ing
 }
 
 //metodo para desloguear un usuario
+const logout = (token) => {//elimina la cookie del token
+    tokenBlacklist.add(token);
+};
+//middleware para verificar el token y comprobar si ha sido invalidado
+const authenticateToken = (req, res, next) => {
+   const token = req.cookies.token; //obtiene el token de las cookies de la solicitud
+    if(!token){
+        return res.status(401).json({error: 'Acceso no autorizado. No se ha enviado un token de autorización'});
+    }
+    //si el token existe, verifica que sea válido
+    if(tokenBlacklist.has(token)){ //has: verifica si un elemento existe en un Set
+        return res.status(401).json({error: 'Acceso no autorizado. Token inválido'});
+    }
+    try{
+        const tokenDecoded = jwt.verify(token, secretKey); //verifica el token con la clave secreta
+        req.user = tokenDecoded; //guarda el token decodificado en el objeto de solicitud (req)
+        next();
+    }catch(err){
+        console.error('Error al verificar el token:', err);
+        return res.status(401).json({error: 'Acceso no autorizado. Token inválido'});
+    }
+};
 
 module.exports = {
     createToken,
     login,
+    logout,
+    authenticateToken,
 };

@@ -4,9 +4,6 @@ const customerController = require('../controllers/customerController');
 const validations = require('../middlewares/validationsCustomer');
 
 
-router.post('/login', customerController.loginUser);
-
-
 router.post('/create', validations.validateCreateCustomer ,customerController.createCustomer);
 router.get('/', customerController.getAllCustomers);
 router.get('/:id', validations.validateGetById ,customerController.getCustomerById);

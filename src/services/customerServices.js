@@ -1,16 +1,22 @@
 const mongoose = require('mongoose');
 const Customer = require('../models/customerModel');
+const bcrypt = require('bcrypt');
 
 //función para crear un usuario
 const createCustomer = async (req, res) => {
-    const customer = new Customer({ //crea un nuevo usuario
-        _id : new mongoose.Types.ObjectId(),
-        usuario: req.body.usuario,
-        contraseña: req.body.contraseña,
-        rol: req.body.rol,
-        email: req.body.email,
-    }); 
+    const {usuario, contraseña,rol, email} = req.body;
     try{
+        //encriptar la contraseña antes de guardarla en la base de datos
+        const hashedPassword = await bcrypt.hash(contraseña, 10); //hash: encripta la contraseña, 10: número de veces que se aplica el algoritmo de encriptación
+       
+        const customer = new Customer({
+            _id: new mongoose.Types.ObjectId(),
+            usuario,
+            contraseña: hashedPassword, //guarda la contraseña encriptada
+            rol,
+            email,
+        });
+
         const customerSaved = await customer.save(); //guarda el usuario en la base de datos
         console.log('Usuario guardado en la base de datos:', customerSaved);
         return customerSaved; //retorna el usuario guardado
