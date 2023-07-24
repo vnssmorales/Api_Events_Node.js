@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const eventController = require('../controllers/eventController');
-const validations = require('../middlewares/validations');
+const validations = require('../middlewares/validationsEvents');
 
 router.use(validations.logRequest); //middleware logRequest (se ejecuta para todas las rutas
 

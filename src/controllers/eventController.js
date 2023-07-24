@@ -1,5 +1,5 @@
 const eventServices = require('../services/eventServices');
-const validations = require('../middlewares/validations');
+const validations = require('../middlewares/validationsEvents');
 
 //función para crear un evento
 const createEvent = async (req, res) => {

@@ -3,7 +3,7 @@ const customerServices = require('../services/customerServices');
 //función para crear un usuario
 const createCustomer = async (req, res) => {
     try{
-        const userSaved = await customerServices.createCustomerc(req, res);
+        const userSaved = await customerServices.createCustomer(req, res);
         console.log('Usuario creado correctamente', userSaved);
         res.status(201).json(userSaved);
     }catch(err){
@@ -12,6 +12,86 @@ const createCustomer = async (req, res) => {
     }
 };
 
+//funcion para obtener todos los usuarios
+const getAllCustomers = async (req, res) => {
+    try{
+        const users = await customerServices.getAllCustomers();
+        if(users.length === 0){
+            return res.status(404).json({error: 'No se encontraron usuarios en la base de datos'});
+        }
+        console.log('Usuarios encontrados:', users);
+        res.status(200).json({users: users}); // si encuentra usuarios, los devuelve como respuesta en formato json
+    }catch(err){
+        console.error('Error al obtener los usuarios:', err);
+        res.status(400).json({error: 'Error al obtener los usuarios de la base de datos'});
+    }
+};
+
+//función para obtener un usuario por su id
+const getCustomerById = async (req, res) => {
+    const customerId = req.params.id; //obtiene el id del usuario de la url (params)
+    try{
+        const user = await customerServices.getCustomerById(customerId);
+        if(!user){
+            return res.status(404).json({error: 'Usuario no encontrado'});
+        }
+        res.status(200).json(user);
+    }catch(err){
+        console.error('Error al obtener el usuario:', err);
+        res.status(400).json({error: 'Error al obtener el usuario de la base de datos'});
+    }
+};
+
+//función para actualizar un usuario por su id
+const updateCustomerById = async (req, res) => {
+    const customerId = req.params.id;
+    try{
+        const updateCustomer = await customerServices.updateCustomerById(customerId, req.body);//req.body: contiene los datos del usuario a actualizar
+        if(!updateCustomer){
+            return res.status(404).json({error: 'Usuario no encontrado'});
+        }
+        res.status(200).json(updateCustomer);
+    }catch(err){
+        console.error('Error al actualizar el usuario:', err);
+        res.status(400).json({error: 'Error al actualizar el usuario en la base de datos'});
+    }
+};
+
+//funcion para actualizar parcialmente un usuario por su id
+const updatePartialCustomerById = async (req, res) => {
+    const customerId = req.params.id;
+    try{
+        const updateCustomer = await customerServices.updatePartialCustomerById(customerId, req.body);//req.body: contiene los datos del usuario a actualizar
+        if(!updateCustomer){
+            return res.status(404).json({error: 'Usuario no encontrado'});
+        }
+        res.status(200).json(updateCustomer);
+    }catch(err){
+        console.error('Error al actualizar el usuario:', err);
+        res.status(400).json({error: 'Error al actualizar el usuario en la base de datos'});
+    }
+};
+
+//función para eliminar un usuario por su id
+const deleteCustomerById = async (req, res) => {
+    const customerId = req.params.id;
+    try{
+        const deleteCustomer = await customerServices.deleteCustomerById(customerId);
+        if(!deleteCustomer){
+            return res.status(404).json({error: 'Usuario no encontrado'});
+        }
+        res.status(200).json({message: 'Usuario eliminado correctamente'});
+    }catch(err){
+        console.error('Error al eliminar el usuario:', err);
+        res.status(400).json({error: 'Error al eliminar el usuario en la base de datos'});
+    }
+};
+
 module.exports = {
     createCustomer,
+    getAllCustomers,
+    getCustomerById,
+    updateCustomerById,
+    updatePartialCustomerById,
+    deleteCustomerById,
 };
