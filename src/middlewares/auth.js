@@ -5,7 +5,6 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const secretKey = process.env.SECRET_KEY; //GUARDADO EN .ENV
-const tokenBlacklist = new Set(); //lista negra para almacenar los tokens inválidos
 
 //metodo para crear un token al iniciar sesión
 const createToken = (user) => { //recibe el usuario que se loguea
@@ -46,10 +45,6 @@ const login = async (req, res) => {//recibe el email y la contraseña que se ing
     }
 }
 
-//metodo para desloguear un usuario
-const logout = (token) => {//elimina la cookie del token
-    tokenBlacklist.add(token);
-};
 //middleware para verificar el token y comprobar si ha sido invalidado
 const authenticateToken = (req, res, next) => {
    const token = req.cookies.token; //obtiene el token de las cookies de la solicitud
@@ -57,10 +52,7 @@ const authenticateToken = (req, res, next) => {
    if(!token){
     res.redirect('/login');
     }
-    //si el token existe, verifica que sea válido
-    if(tokenBlacklist.has(token)){ //has: verifica si un elemento existe en un Set
-        res.redirect('/login');
-    }
+   
     try{
         const tokenDecoded = jwt.verify(token, secretKey); //verifica el token con la clave secreta
        if(tokenDecoded){
@@ -77,6 +69,5 @@ const authenticateToken = (req, res, next) => {
 module.exports = {
     createToken,
     login,
-    logout,
     authenticateToken,
 };

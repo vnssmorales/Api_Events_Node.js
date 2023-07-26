@@ -15,9 +15,7 @@ const loginUser = async (req, res) => {
 const logoutUser = async (req, res) => {
     try{
         //obtener el token de las cookies de la solicitud
-        const token = req.cookies.token;
-        //invalidar el token agregándolo a la lista negra
-        auth.logout(token);
+       // const token = req.cookies.token;
         //limpiar la cookie del token
         res.clearCookie('token', {httpOnly: true, secure: true});
         //devolver una respuesta exitosa
