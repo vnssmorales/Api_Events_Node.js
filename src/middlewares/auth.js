@@ -1,8 +1,10 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Customer = require('../models/customerModel');
+const dotenv = require('dotenv');
+dotenv.config();
 
-const secretKey = 'secret-key'; //clave secreta para firmar el token
+const secretKey = process.env.SECRET_KEY; //GUARDADO EN .ENV
 const tokenBlacklist = new Set(); //lista negra para almacenar los tokens inválidos
 
 //metodo para crear un token al iniciar sesión
@@ -11,6 +13,7 @@ const createToken = (user) => { //recibe el usuario que se loguea
         id: user._id,
         email: user.email,
     };
+    console.log(secretKey)
     const token = jwt.sign(payload, secretKey, {expiresIn: '1h'}); //sign: firma el token con la clave secreta y le agrega una expiración de 1 hora
     return token;
 }
@@ -19,6 +22,7 @@ const createToken = (user) => { //recibe el usuario que se loguea
 const login = async (req, res) => {//recibe el email y la contraseña que se ingresan al iniciar sesión
     const {email, contraseña} = req.body;
     try{
+        console.log(req.body)
         //busca el usuario por su email en la base de datos
         const user = await Customer.findOne({ email: email });
         //si no encuentra el usuario, devuelve un mensaje de error
@@ -34,8 +38,8 @@ const login = async (req, res) => {//recibe el email y la contraseña que se ing
         //si la contraseña es válida, crea y devuelve un token
         const token = createToken(user);
         //establecer la cookie en la respuesta
-        res.cookie('token', token, {httpOnly: true, maxAge: 3600000, secure: true}); //httpOnly: la cookie no es accesible desde el cliente, maxAge: expiración en miliseg, secure: la cookie solo se envía a través de https
-        return res.status(200).json({token});
+        res.cookie('token', token).send('cookie establecida'); 
+        //return res.status(200).json({token});
     }catch(err){
         console.error('Error al iniciar sesión:', err);
        return res.status(500).json({error: 'Error al iniciar sesión'});
@@ -49,20 +53,24 @@ const logout = (token) => {//elimina la cookie del token
 //middleware para verificar el token y comprobar si ha sido invalidado
 const authenticateToken = (req, res, next) => {
    const token = req.cookies.token; //obtiene el token de las cookies de la solicitud
-    if(!token){
-        return res.status(401).json({error: 'Acceso no autorizado. No se ha enviado un token de autorización'});
+   console.log(req.cookies)
+   if(!token){
+    res.redirect('/login');
     }
     //si el token existe, verifica que sea válido
     if(tokenBlacklist.has(token)){ //has: verifica si un elemento existe en un Set
-        return res.status(401).json({error: 'Acceso no autorizado. Token inválido'});
+        res.redirect('/login');
     }
     try{
         const tokenDecoded = jwt.verify(token, secretKey); //verifica el token con la clave secreta
-        req.user = tokenDecoded; //guarda el token decodificado en el objeto de solicitud (req)
+       if(tokenDecoded){
         next();
+       }else{
+        res.redirect('/login');
+       }
     }catch(err){
         console.error('Error al verificar el token:', err);
-        return res.status(401).json({error: 'Acceso no autorizado. Token inválido'});
+        return res.status(401).json({error: 'Acceso no autorizado. Token inválido'});// ERROR 500
     }
 };
 

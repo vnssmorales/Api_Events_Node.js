@@ -28,7 +28,6 @@ const logoutUser = async (req, res) => {
     }
 };
 
-
 //función para crear un usuario
 const createCustomer = async (req, res) => {
     try{
@@ -45,11 +44,12 @@ const createCustomer = async (req, res) => {
 //funcion para obtener todos los usuarios
 const getAllCustomers = async (req, res) => {
     try{
+        console.log(req.cookies.token)
         const users = await customerServices.getAllCustomers();
         if(users.length === 0){
             return res.status(404).json({error: 'No se encontraron usuarios en la base de datos'});
         }
-        console.log('Usuarios encontrados:', users);
+      //  console.log('Usuarios encontrados:', users);
         res.status(200).json({users: users}); // si encuentra usuarios, los devuelve como respuesta en formato json
     }catch(err){
         console.error('Error al obtener los usuarios:', err);

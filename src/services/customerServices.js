@@ -33,7 +33,7 @@ const getAllCustomers = async () => {
         if(customers.length === 0){
             return null;
         }
-        console.log('Usuarios encontrados:', customers);
+       // console.log('Usuarios encontrados:', customers);
         return customers; //retorna los usuarios encontrados
     }catch(err){
         console.error('Error al obtener los usuarios:', err);
