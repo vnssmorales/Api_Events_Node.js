@@ -32,9 +32,9 @@ const logoutUser = async (req, res) => {
 const createCustomer = async (req, res) => {
     try{
         console.log('Datos recibidos en el controlador:', req.body);
-        const userSaved = await customerServices.createCustomer(req, res);
+        const {userSaved, token} = await customerServices.createCustomer(req, res);
         console.log('Usuario creado correctamente', userSaved);
-        res.status(201).json(userSaved);
+        res.status(201).json({userSaved, token});
     }catch(err){
         console.error('Error al crear el usuario:', err);
         res.status(400).json({error: 'Error al crear el usuario en la base de datos'});

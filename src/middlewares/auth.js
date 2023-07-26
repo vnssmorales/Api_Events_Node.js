@@ -22,12 +22,12 @@ const createToken = (user) => { //recibe el usuario que se loguea
 const login = async (req, res) => {//recibe el email y la contraseña que se ingresan al iniciar sesión
     const {email, contraseña} = req.body;
     try{
-        console.log(req.body)
+       // console.log(req.body)
         //busca el usuario por su email en la base de datos
         const user = await Customer.findOne({ email: email });
         //si no encuentra el usuario, devuelve un mensaje de error
         if(!user){
-            return res.status(401).json({error: 'credenciales incorrectas'});
+            return res.status(401).json({error: 'usuario no encontrado en la base de datos'});
         }
         //compara la contraseña ingresada con la contraseña encriptada en la base de datos
         const validPassword = await bcrypt.compare(contraseña, user.contraseña); //compare: compara la contraseña ingresada con la contraseña encriptada en la base de datos

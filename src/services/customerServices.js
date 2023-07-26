@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Customer = require('../models/customerModel');
 const bcrypt = require('bcrypt');
+const { createToken } = require('../middlewares/auth');
 
 //función para crear un usuario
 const createCustomer = async (req, res) => {
@@ -19,7 +20,9 @@ const createCustomer = async (req, res) => {
 
         const customerSaved = await customer.save(); //guarda el usuario en la base de datos
         console.log('Usuario guardado en la base de datos:', customerSaved);
-        return customerSaved; //retorna el usuario guardado
+        //si el usuario se crea correctamente, generamos el token
+        const token = createToken(customerSaved);
+        return { user: customerSaved, token}; //retorna el usuario guardado
     }catch(err){
         console.error('Error al guardar el usuario:', err);
         throw new Error('Error al guardar el usuario en la base de datos');
