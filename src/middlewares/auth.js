@@ -12,7 +12,7 @@ const createToken = (user) => { //recibe el usuario que se loguea
         id: user._id,
         email: user.email,
     };
-    console.log(secretKey)
+   // console.log(secretKey)
     const token = jwt.sign(payload, secretKey, {expiresIn: '1h'}); //sign: firma el token con la clave secreta y le agrega una expiración de 1 hora
     return token;
 }
@@ -52,7 +52,6 @@ const authenticateToken = (req, res, next) => {
    if(!token){
     res.redirect('/login');
     }
-   
     try{
         const tokenDecoded = jwt.verify(token, secretKey); //verifica el token con la clave secreta
        if(tokenDecoded){

@@ -1,5 +1,8 @@
 const customerServices = require('../services/customerServices');
 const auth = require('../middlewares/auth');
+const jwt = require('jsonwebtoken');
+const Customer = require('../models/customerModel');
+const secretKey = process.env.SECRET_KEY; //GUARDADO EN .ENV
 
 //controlador para iniciar sesión
 const loginUser = async (req, res) => {
@@ -115,6 +118,29 @@ const deleteCustomerById = async (req, res) => {
     }
 };
 
+//funcion para obtener los datos del usuario logueado y mostrarlos en el perfil
+const getCurrentCustomer = async (req, res) => {
+    try{
+        //obtener el token del usuario de las cookies de la solicitud
+        const token = req.cookies.token;
+        //decodificar el token
+        const decodedToken = jwt.verify(token, secretKey);
+        //obtener el usuario logueado
+        const email = decodedToken.email;
+        //buscar el usuario en la base de datos
+        const user= await Customer.findOne({email: email});
+        if(!user){
+            return res.status(404).json({error: 'Usuario no encontrado'});
+        }
+        //devolver los datos del usuario
+        res.status(200).json({user});
+    }catch(err){
+        console.error('Error al obtener los datos del usuario:', err);
+        res.status(400).json({error: 'Error al obtener los datos del usuario'});
+    }
+};
+
+
 module.exports = {
     createCustomer,
     getAllCustomers,
@@ -123,5 +149,6 @@ module.exports = {
     updatePartialCustomerById,
     deleteCustomerById,
     loginUser,
-    logoutUser
+    logoutUser,
+    getCurrentCustomer,
 };

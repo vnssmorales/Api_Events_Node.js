@@ -23,7 +23,7 @@ const getAllEvents = async (req, res) => {
         if(events.length === 0){
             return res.status(404).json({error: 'No se encontraron eventos en la base de datos'});
         }
-        console.log('Eventos encontrados:', events);
+       // console.log('Eventos encontrados:', events);
         res.status(200).json({events: events}); // si encuentra eventos, los devuelve como respuesta en formato json
     }catch(err){
         console.error('Error al obtener los eventos:', err);

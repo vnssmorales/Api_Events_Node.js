@@ -22,7 +22,7 @@ const createCustomer = async (req, res) => {
         console.log('Usuario guardado en la base de datos:', customerSaved);
         //si el usuario se crea correctamente, generamos el token
         const token = createToken(customerSaved);
-        return { user: customerSaved, token}; //retorna el usuario guardado
+        return { userSaved: customerSaved, token}; //retorna el usuario guardado
     }catch(err){
         console.error('Error al guardar el usuario:', err);
         throw new Error('Error al guardar el usuario en la base de datos');
@@ -103,6 +103,7 @@ const deleteCustomerById = async (customerId) => {
         throw new Error('Error al eliminar el usuario de la base de datos');
     }
 };
+
 
 module.exports = {
     createCustomer,
